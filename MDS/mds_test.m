@@ -116,3 +116,5 @@ disp(D.^2)
 
 printf('calculate distance:\n')
 disp(CD)
+
+
