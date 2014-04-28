@@ -1,0 +1,3 @@
+使用F距离，计算降rank后与原矩阵最接近的矩阵。
+EckartYoung.m 是原本的EckartYoung的算法。
+centralize.m 是作业中要求满足Z'1n = 0的中心化结果。

@@ -7,16 +7,20 @@ nv(:,4) = [];
 nv(:,3) = [];
 q = nv'*M'*M*nv;
 
-
+h = eye(3) - ones(3,1) * ones(1,3) / 3;
 %v
-z = M* nv 
-z = M*nv - ones(3,1) * (ones(1,3) *  M * nv / 3)
+z = h*M*nv;
 %
 %
 z'*ones(3,1)
 %
 zv = z *  nv';
 
-sum(  ((M - zv).^2)(:) ) 
+[uz,sz,vz] = svd( z'*z );
 
 
+sum( s(:)) - sum( sz(:) )
+
+sum(sum(((M - zv).^2)) )
+
+plotdiff(M,zv)
