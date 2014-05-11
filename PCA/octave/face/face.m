@@ -55,7 +55,7 @@ pause;
 
 % recover from Z
 figure;
-X_rec = ( U_reduce * Z')';
+X_rec = Z * U_reduce' ;
 displayData(X_rec(1:36, :));
 title('recovered face');
 fprintf('Program paused. Displaying recover face with 100 dimision\n');
