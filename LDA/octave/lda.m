@@ -38,7 +38,7 @@ for j=1:c
 	Sb = Sb + n * (m(j,:) - total_m)' * ( m(j,:) - total_m); 
 end
 
-[u,lambda,v] = svd( pinv(Sw) * Sb)
+[u,lambda,v] = svd( pinv(Sw+Sb) * Sb)
 
 
 

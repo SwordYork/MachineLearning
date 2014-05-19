@@ -38,7 +38,7 @@ Sb = Sb + size(X2,1) * (m2 - m)' * (m2 - m);
 
 
 % the vector
-[u,lambda,v] = svd( pinv(Sw) * Sb);
+[u,lambda,v] = svd( pinv(Sw+Sb) * Sb);
 w = u(:,1)
 
 %plot w
