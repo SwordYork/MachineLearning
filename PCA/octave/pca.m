@@ -3,8 +3,70 @@ data = gendata(1000,1,10,0.3,2);
 H = eye(M) - ones(M,1) * ones(1,M) / M;
 zero_data = H * data ;
 
-S = transpose(zero_data) * zero_data / N;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			 Method 1
+%			 S = X^THX
+%			 Convert Coordinates: HXG
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+S = transpose(zero_data) * zero_data; 
 [G,L] = eig(S);
+Test = zero_data*G;
+zero_data(1:10,:)
+Recover = Test*G';
+Recover(1:10,:)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			 Method 2: PCO
+%			 T = HX^TXH
+%			 Convert Coordinates: UL.^0.5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+T = zero_data * transpose(zero_data);
+[U,L1] = eig(T);
+p = find((L1 > 1000) == 1);	% useful eigenvalues
+cL = ([L1(:,(p(1)+1000)/1001),L1(:,(p(2)+1000)/1001)].^0.5);
+Test = U*cL;
+zero_data(1:10,:)
+Recover = Test * G';		% must use G
+Recover(1:10,:)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			 Method 3: SVD 
+%			 HX = UlV^T l^2 = L
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HX = zero_data;
+[U,l,V] = svd(HX);
+Test = HX*V;
+zero_data(1:10,:)
+Recover = Test*V';
+Recover(1:10,:)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			 Method 4: Direct SVD 
+%			 X^THX = ULV^T  % eig
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[U,s,V] = svd(S);
+Test = zero_data*V;
+zero_data(1:10,:)
+Recover = Test*V';
+Recover(1:10,:)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       Reduce Dimision
+% 		SVD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[U,s,V] = svd(S)
+Test = zero_data*V(:,1);
+zero_data(1:10,:)
+Recover = Test*V(:,1)';
+Recover(1:10,:)
+sum(sum((Recover - zero_data).^2)) %ofcourse is the small singular value
+
+
+
 % resort eig
 V = diag(L);
 [junk, rindice] = sort(-1*V);
