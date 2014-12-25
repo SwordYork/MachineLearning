@@ -1,4 +1,4 @@
-MachineLearning
+Machine Learning
 ===============
 
-octave  algorithm for some machine learning problems.
+Algorithm for some machine learning problems.

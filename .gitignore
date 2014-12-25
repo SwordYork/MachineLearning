@@ -1,1 +1,16 @@
-.directory
+# ignore all 
+*
+
+# don't ignore which have extensions or dir 
+!*.*
+!*/
+!Make*
+
+# ignore hidden file
+.*
+*.o
+*.so
+*.out
+test/
+temp/
+
