@@ -7,7 +7,8 @@ function [ xp, v, h_x ] = cg(f, x0)
     e = 1e-4;
     h_x = xk;
     while norm(g_fk) > e
-       ak = wolfe(f, xk, pk);
+       %ak = wolfe(f, xk, pk);
+       ak = strongwolfe(f, xk, pk, 2);
        tmp_xk = xk;
        xk = xk + ak * pk;
        tmp_g_fk = g_fk;
