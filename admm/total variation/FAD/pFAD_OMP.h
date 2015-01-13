@@ -4,8 +4,8 @@
 #include <cv.h>
 
 
-#ifndef MEDIAN_FILTER_H
-#define MEDIAN_FILTER_H
-void median_filter(cv::Mat input, cv::Mat output);
+#ifndef PFAD_OMP_H
+#define PFAD_OMP_H
 
+cv::Mat total_variation(cv::Mat image);
 #endif

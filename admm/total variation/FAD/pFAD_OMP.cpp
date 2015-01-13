@@ -1,43 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <iostream>
-#include <string.h>
 #include <omp.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 #include <cv.h>
 
 // #include <opencv2/photo/photo.hpp>
 
 
-#include "median_filter.h"
-
 using namespace cv;
-using namespace std;
 
 /*compute the primal error and residual*/
-__inline bool stopPri(double **X, double *sol, int m, int n, double absTol, double relTol, int display);
+__inline bool stopPri(float **X, float *sol, int m, int n, float absTol, float relTol, int display);
 
 /*compute the dual error and resudual*/
-__inline bool stopDual(double *sol, double *sol_o, double *U1, double *U2, double *U3, int m, int n, 
-				double rho, double absTol, double relTol, int display);
+__inline bool stopDual(float *sol, float *sol_o, float *U1, float *U2, float *U3, int m, int n, 
+				float rho, float absTol, float relTol, int display);
 
 /*compute the root of the quartic function*/
-__inline double NewtonRoot(const double a, const double b, const double c, const double d);
+__inline float NewtonRoot(const float a, const float b, const float c, const float d);
 
 /*get the function value*/
-__inline double get_funval(const double *sol, const double *Y, const double lam, const int imgHeight, const int imgWidth);
+__inline float get_funval(const float *sol, const float *Y, const float lam, const int imgHeight, const int imgWidth);
 
 /*method for isotropic TV*/
-int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, const double lam, const double rho, 
-			  const int maxIter, const double absTol, const double relTol, const int display);
+int tvl2_iso(float* sol, float* Y, const int imgHeight, const int imgWidth, const float lam, const float rho, 
+			  const int maxIter, const float absTol, const float relTol, const int display);
 
 			  
-__inline double NewtonRoot(const double a, const double b, const double c, const double d){
+__inline float NewtonRoot(const float a, const float b, const float c, const float d){
 	// initial x = 0.1
 	double x = 0.1;
 	double x2 = 0.01;
@@ -70,10 +61,10 @@ __inline double NewtonRoot(const double a, const double b, const double c, const
 	return x;
 }
 
-bool stopPri(double **X, double *sol, int m, int n, double absTol, double relTol, int display)
+bool stopPri(float **X, float *sol, int m, int n, float absTol, float relTol, int display)
 {
-	const double sqrt3 = sqrt(3.0);
-	double rk = 0, epri = 0, ex = 0, ez = 0;
+	const float sqrt3 = sqrt(3.0);
+	float rk = 0, epri = 0, ex = 0, ez = 0;
 	const int imgDim = m*n;
 	int i;
 	int max_threads = omp_get_max_threads();
@@ -108,11 +99,11 @@ bool stopPri(double **X, double *sol, int m, int n, double absTol, double relTol
 
 
 // dual error and dual residual: stop 2
-bool stopDual(double *sol, double *sol_o, double *U1, double *U2, double *U3, int m, int n, 
-				double rho, double absTol, double relTol, int display)
+bool stopDual(float *sol, float *sol_o, float *U1, float *U2, float *U3, int m, int n, 
+				float rho, float absTol, float relTol, int display)
 {
-	double sqrt3 = sqrt(3.0);
-	double sk = 0, ed = 0;
+	float sqrt3 = sqrt(3.0);
+	float sk = 0, ed = 0;
 	int imgDim = m*n;
 	int i;
 	int max_threads = omp_get_max_threads();
@@ -141,10 +132,10 @@ bool stopDual(double *sol, double *sol_o, double *U1, double *U2, double *U3, in
 	return (sk <= ed);
 }
 
-double get_funval(const double *sol, const double *Y, const double lam, const int imgHeight, const int imgWidth){
+float get_funval(const float *sol, const float *Y, const float lam, const int imgHeight, const int imgWidth){
 	
-	double obj = 0.;
-	double temp = 0.;
+	float obj = 0.;
+	float temp = 0.;
 	int i, j;
 	int imgDim = imgHeight * imgWidth;
 		
@@ -170,50 +161,50 @@ double get_funval(const double *sol, const double *Y, const double lam, const in
 	return obj + lam*temp;
 }
 
-int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, const double lam, const double rho, 
-			  const int maxIter, const double absTol, const double relTol, const int display)
+int tvl2_iso(float* sol, float* Y, const int imgHeight, const int imgWidth, const float lam, const float rho, 
+			  const int maxIter, const float absTol, const float relTol, const int display)
 {
-	double *U1, *U2, *U3, *sol_o, *T, td, w0,w1,w2, temp1, temp2;
-	double **X;
+	float *U1, *U2, *U3, *sol_o, *T, td, w0,w1,w2, temp1, temp2;
+	float **X;
 	int iter, i, j;
 	unsigned int *BlkInd;
 	const int imgDim = imgHeight*imgWidth;
-	double wt0,wt1;
+	float wt0,wt1;
 	// set some frequently used constants
-	const double flam = lam/rho;
-	const double rhoinv = 1.0/rho;
-	const double flamp2 = flam*flam;
-	const double flamp2_12 = 12*flamp2;
-	const double flamp2_22 = 22*flamp2;
-	const double flamp2_9 = 9*flamp2;
-	const double invflamp2 = 1/flamp2;
-	const double flamp4 = flamp2*flamp2;
-	const double flamp6 = flamp4*flamp2;
-	const double sqrt2 = sqrt(2.0);
-	const double sqrt3 = sqrt(3.0);
-	const double aa = 8.0*flamp2;
-	const double inv3 = 1/3.;
-	double alpha, temp,obj, ox1,ox2,ox3,oz;
+	const float flam = lam/rho;
+	const float rhoinv = 1.0/rho;
+	const float flamp2 = flam*flam;
+	const float flamp2_12 = 12*flamp2;
+	const float flamp2_22 = 22*flamp2;
+	const float flamp2_9 = 9*flamp2;
+	const float invflamp2 = 1/flamp2;
+	const float flamp4 = flamp2*flamp2;
+	const float flamp6 = flamp4*flamp2;
+	const float sqrt2 = sqrt(2.0);
+	const float sqrt3 = sqrt(3.0);
+	const float aa = 8.0*flamp2;
+	const float inv3 = 1/3.;
+	float alpha, temp,obj, ox1,ox2,ox3,oz;
 
 	// intilize some used matrix
-	double GGTI[4] = {0, 0,
+	float GGTI[4] = {0, 0,
 					  0, 0};
-	double GTGGTI[9] = {-1.0, 1.0, 0, 
+	float GTGGTI[9] = {-1.0, 1.0, 0, 
 						  0, -1.0, 1.0,
 						  0, -1.0 , 1.0};
 	
-	double bb,cc,dd, aa2, bb2,aabb;
-	double t1,t2;
+	float bb,cc,dd, aa2, bb2,aabb;
+	float t1,t2;
 	
-	X = (double **) malloc(3*sizeof(double *));
-	X[0] = (double *)malloc(imgDim*sizeof(double));
-	X[1] = (double *)malloc(imgDim*sizeof(double));
-	X[2] = (double *)malloc(imgDim*sizeof(double));
+	X = (float **) malloc(3*sizeof(float *));
+	X[0] = (float *)malloc(imgDim*sizeof(float));
+	X[1] = (float *)malloc(imgDim*sizeof(float));
+	X[2] = (float *)malloc(imgDim*sizeof(float));
 	BlkInd = (unsigned int *) malloc(imgDim*sizeof(unsigned int));
-	sol_o  =  (double *) malloc(imgDim*sizeof(double));
-	U1  =  (double *) calloc(imgDim, sizeof(double));
-	U2  =  (double *) calloc(imgDim, sizeof(double));
-	U3  =  (double *) calloc(imgDim, sizeof(double));
+	sol_o  =  (float *) malloc(imgDim*sizeof(float));
+	U1  =  (float *) calloc(imgDim, sizeof(float));
+	U2  =  (float *) calloc(imgDim, sizeof(float));
+	U3  =  (float *) calloc(imgDim, sizeof(float));
 
 	int max_threads = omp_get_max_threads();
 	
@@ -221,8 +212,8 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 	td = 1.0/(1 + 3* rho);
 
 	
-	memcpy(sol,Y,imgDim*sizeof(double));
-	memcpy(sol_o,Y,imgDim*sizeof(double));
+	memcpy(sol,Y,imgDim*sizeof(float));
+	memcpy(sol_o,Y,imgDim*sizeof(float));
 		
 	omp_set_num_threads(max_threads);
 	#pragma omp parallel shared(BlkInd) private(i,j)
@@ -401,7 +392,7 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 
 		if(iter%step_size == 0){
 			if(!stopDual(sol,sol_o,U1,U2,U3,imgHeight,imgWidth, rho,absTol,relTol,display)){
-				memcpy(sol_o, sol, imgDim*sizeof(double));
+				memcpy(sol_o, sol, imgDim*sizeof(float));
 				continue;
 			}		
 			if(stopPri(X,sol,imgHeight,imgWidth, absTol,relTol,display)){
@@ -409,7 +400,7 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 			}
 		}	
 			
-		memcpy(sol_o, sol, imgDim*sizeof(double));
+		memcpy(sol_o, sol, imgDim*sizeof(float));
 	}
 
 	
@@ -434,18 +425,18 @@ Mat total_variation(Mat image) {
     int imgHeight = size.height;
     int imgWidth = size.width;
 
-    double lam = 0.3;
-    double gamma = 7;
+    float lam = 0.3;
+    float gamma = 7;
     int maxIter = 1000;
-    double tol[] = {1e-4, 1e-4};
+    float tol[] = {1e-4, 1e-4};
     int display = 1;
 
-    double *inputImg, *outputImg, *iter, *funVal;
+    float *inputImg, *outputImg, *iter, *funVal;
 
-    outputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-    inputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-    iter = (double *) malloc(sizeof(double));
-    funVal = (double *) malloc(sizeof(double));
+    outputImg = (float *) malloc(imgHeight * imgWidth * sizeof(float));
+    inputImg = (float *) malloc(imgHeight * imgWidth * sizeof(float));
+    iter = (float *) malloc(sizeof(float));
+    funVal = (float *) malloc(sizeof(float));
 
     split(image, chans);
 
@@ -453,17 +444,17 @@ Mat total_variation(Mat image) {
         // B channel
         for (int i=0; i < imgHeight; ++i)
             for (int j=0; j < imgWidth; ++j) 
-                inputImg[i*imgWidth + j] = chans[c].at<double>(i, j) / 256;
+                inputImg[i*imgWidth + j] = chans[c].at<float>(i, j) / 256;
 
-        memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
+        memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(float));
         //
-        iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
+        iter[0] = (float)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
         funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
         //
 
         for (int i=0; i < imgHeight; ++i)
             for (int j=0; j < imgWidth; ++j)
-                chans[c].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
+               chans[c].at<float>(i, j) = outputImg[i * imgWidth + j]  * 256;
 
     }
 
@@ -479,64 +470,3 @@ Mat total_variation(Mat image) {
     return image;
 }
 
-
-int main(int argc, char** argv )
-{
-    Mat origin_image, image, noise_image;
-    origin_image = imread("test.png", CV_LOAD_IMAGE_COLOR);   // Read the file
-    image = origin_image.clone();
-
-    Size size = image.size();
-    int imgHeight = size.height;
-    int imgWidth = size.width;
-
-
-    
-    image.convertTo(image, CV_64FC4);
-    noise_image = image.clone();
-    randn(noise_image,0,20);
-    noise_image += image;
-
-    image = noise_image.clone();
-    
-    noise_image.convertTo(noise_image, CV_8UC3);
-
-    
-    image = total_variation(image);
-
-
-    Mat cv_denoise = origin_image.clone();
-    //fastNlMeansDenoisingColored(origin_image, cv_denoise, 10);
-    median_filter(origin_image, cv_denoise);
-
-
-    Mat im3(2 * imgHeight, 2 * imgWidth, CV_8UC3);
-    // Move right boundary to the left.
-    im3.adjustROI(0, -imgHeight, 0, -imgWidth);
-    origin_image.copyTo(im3);
-    // Move the left boundary to the right, right boundary to the right.
-    im3.adjustROI(0, 0, -imgWidth, imgWidth);
-    noise_image.copyTo(im3);
-
-
-    im3.adjustROI(-imgHeight, imgHeight, imgWidth, -imgWidth);
-    cv_denoise.copyTo(im3);
-    // 
-    im3.adjustROI(0, 0, -imgWidth, imgWidth);
-    image.copyTo(im3);
-
-    // restore original ROI.
-    im3.adjustROI(imgHeight, 0, imgWidth, 0);
-
-
-
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-    imshow( "Display window", im3);                   // Show our image inside it.
-    imwrite("t.jpg", im3);
-
-
-    waitKey(0);                                          // Wait for a keystroke in the window
-
-    return 0;
-}

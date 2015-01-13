@@ -12,7 +12,7 @@
 #include "median_filter.h"
 
 #define THREADSNUM 4
-#define WINDOWSIZE 5
+#define WINDOWSIZE 7
 #define MAXV 256
 #define MAXAB(a,b) ((a) > (b) ? (a) : (b)) 
 #define MINAB(a,b) ((a) < (b) ? (a) : (b)) 

@@ -437,113 +437,15 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 
 
 
-//int main( int argc, char** argv )
-//{
-//    Mat image, chans[3];
-//    image = imread("test.png", CV_LOAD_IMAGE_COLOR);   // Read the file
-//
-//    int imgHeight = image.size().height;
-//    int imgWidth = image.size().width;
-//
-//    double lam = 0.35;
-//    double gamma = 7;
-//    int maxIter = 1000;
-//    double tol[] = {1e-4, 1e-4};
-//    int display = 1;
-//
-//    double *inputImg, *outputImg, *iter, *funVal;
-//
-//    outputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-//    inputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-//    iter = (double *) malloc(sizeof(double));
-//    funVal = (double *) malloc(sizeof(double));
-//
-//
-//    image.convertTo(image, CV_64FC4);
-//    Mat gaussian_noise = image.clone();
-//    randn(gaussian_noise,0,20);
-//   // image += gaussian_noise;
-//
-//    split(image, chans);
-//
-//
-//    // B channel
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[0].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[0].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[1].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[1].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//   for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[2].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[2].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//    merge(chans, 3, image);
-//    image.convertTo(image, CV_8UC3);
-//    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-//    imshow( "Display window", image);                   // Show our image inside it.
-//    imwrite("t.jpg", image);
-//
-//
-//    waitKey(0);                                          // Wait for a keystroke in the window
-//
-//    free(outputImg);
-//    free(iter);
-//    free(funVal);
-//
-//    return 0;
-//}
-//
+int main( int argc, char** argv )
+{
+    Mat image, chans[3];
+    image = imread("test.png", CV_LOAD_IMAGE_COLOR);   // Read the file
 
-Mat total_variation(Mat image) {
-    Mat chans[3];
+    int imgHeight = image.size().height;
+    int imgWidth = image.size().width;
 
-    Size size = image.size();
-    int imgHeight = size.height;
-    int imgWidth = size.width;
-
-    double lam = 0.3;
+    double lam = 0.35;
     double gamma = 7;
     int maxIter = 1000;
     double tol[] = {1e-4, 1e-4};
@@ -556,35 +458,79 @@ Mat total_variation(Mat image) {
     iter = (double *) malloc(sizeof(double));
     funVal = (double *) malloc(sizeof(double));
 
+
+    image.convertTo(image, CV_64FC4);
+    Mat gaussian_noise = image.clone();
+    randn(gaussian_noise,0,20);
+   // image += gaussian_noise;
+
     split(image, chans);
 
-    for (int c = 0; c < 3; ++c) {
-        // B channel
-        for (int i=0; i < imgHeight; ++i)
-            for (int j=0; j < imgWidth; ++j) 
-                inputImg[i*imgWidth + j] = chans[c].at<double>(i, j) / 256;
 
-        memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-        //
-        iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-        funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-        //
+    // B channel
+    for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j) {
+            inputImg[i*imgWidth + j] = chans[0].at<double>(i, j) / 256;
+          //  printf("%f\n", inputImg[i*imgWidth + j]);
+        }
 
-        for (int i=0; i < imgHeight; ++i)
-            for (int j=0; j < imgWidth; ++j)
-                chans[c].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
+//
+    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
+//
+    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
+	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
+//
+    for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j)
+            chans[0].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
 
-    }
+
+    for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j) {
+            inputImg[i*imgWidth + j] = chans[1].at<double>(i, j) / 256;
+          //  printf("%f\n", inputImg[i*imgWidth + j]);
+        }
+
+//
+    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
+//
+    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
+	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
+//
+    for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j)
+            chans[1].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
+
+
+   for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j) {
+            inputImg[i*imgWidth + j] = chans[2].at<double>(i, j) / 256;
+          //  printf("%f\n", inputImg[i*imgWidth + j]);
+        }
+
+//
+    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
+//
+    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
+	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
+//
+    for (int i=0; i < imgHeight; ++i)
+        for (int j=0; j < imgWidth; ++j)
+            chans[2].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
 
 
     merge(chans, 3, image);
     image.convertTo(image, CV_8UC3);
+    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
+    imshow( "Display window", image);                   // Show our image inside it.
+    imwrite("t.jpg", image);
 
+
+    waitKey(0);                                          // Wait for a keystroke in the window
 
     free(outputImg);
-    free(inputImg);
     free(iter);
     free(funVal);
-    return image;
-}
 
+    return 0;
+}
