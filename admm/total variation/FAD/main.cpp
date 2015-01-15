@@ -9,6 +9,7 @@
 
 #include "median_filter.h"
 #include "pFAD.h"
+#include "helper_timer.h"
 
 using namespace cv;
 
@@ -45,8 +46,11 @@ int main(int argc, char** argv )
     // total variation need double type
     tv_image = noise_image.clone();
 
+
     // use openmp pFAD version to denoise
+    start_timer();
     tv_image = total_variation(tv_image);
+    printf("openmp tv running time:%f\n", elasp_time());
 
 
 
@@ -54,28 +58,32 @@ int main(int argc, char** argv )
     cuda_tv_image = noise_image.clone();
 
     // use openmp pFAD version to denoise
+    start_timer();
     cuda_tv_image = cuda_total_variation(cuda_tv_image);
-
-    
+    printf("cuda tv running time:%f\n", elasp_time());
 
     // byte type
     noise_image.convertTo(noise_image, CV_8UC3);
 
     // use median_filter method to denoise
     median_filter_denoise = noise_image.clone();
+
+    start_timer();
     median_filter(noise_image, median_filter_denoise);
+    printf("median_filte running time:%f\n", elasp_time());
 
 
     // build in method
     build_in_image = noise_image.clone();
+    start_timer();
     fastNlMeansDenoisingColored(origin_image, build_in_image, 10);
+    printf("build in method running time:%f\n", elasp_time());
 
 
     Mat im3(2 * imgHeight, 3 * imgWidth, CV_8UC3);
     // Move right boundary to the left.
     im3.adjustROI(0, -imgHeight, 0, -2*imgWidth);
     origin_image.copyTo(im3);
-
 
 
     // Move the left boundary to the right, right boundary to the right.

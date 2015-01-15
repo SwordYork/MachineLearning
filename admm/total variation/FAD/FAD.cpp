@@ -1,10 +1,10 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include <time.h>
 #include <string.h>
-#include<opencv2/core/core.hpp>
-#include<cv.h>
+#include <opencv2/core/core.hpp>
+#include <cv.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
@@ -31,28 +31,6 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 			  const int maxIter, const double absTol, const double relTol, const int display);
 
 			  
-//void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
-//{
-//    /*set up input arguments */
-//    double* inputImg =          mxGetPr(prhs[0]);
-//    int imgHeight =                 (int) mxGetM(prhs[0]);
-//    int imgWidth =                  (int) mxGetN(prhs[0]);
-//    double lam =               mxGetScalar(prhs[1]);    
-//    double gamma =             mxGetScalar(prhs[2]);    
-//    int maxIter =          (int) mxGetScalar(prhs[3]);    
-//    double* tol =              mxGetPr(prhs[4]);    
-//    int display =              (int) mxGetScalar(prhs[5]);
-//    double *outputImg, *iter, *funVal;
-//    plhs[0] = mxCreateDoubleMatrix(imgHeight, imgWidth, mxREAL);
-//    plhs[1] = mxCreateDoubleMatrix(1, 1, mxREAL);
-//	plhs[2] = mxCreateDoubleMatrix(1, 1, mxREAL);
-//    outputImg = mxGetPr(plhs[0]);
-//	funVal = mxGetPr(plhs[1]);
-//    iter = mxGetPr(plhs[2]);
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-//}
 			  
 __inline double NewtonRoot(const double a, const double b, const double c, const double d){
 	// initial x = 0.1
@@ -412,129 +390,6 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 }
 
 
-//void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
-//{
-//    /*set up input arguments */
-//    double* inputImg =          mxGetPr(prhs[0]);
-//    int imgHeight =                 (int) mxGetM(prhs[0]);
-//    int imgWidth =                  (int) mxGetN(prhs[0]);
-//    double lam =               mxGetScalar(prhs[1]);    
-//    double gamma =             mxGetScalar(prhs[2]);    
-//    int maxIter =          (int) mxGetScalar(prhs[3]);    
-//    double* tol =              mxGetPr(prhs[4]);    
-//    int display =              (int) mxGetScalar(prhs[5]);
-//    double *outputImg, *iter, *funVal;
-//    plhs[0] = mxCreateDoubleMatrix(imgHeight, imgWidth, mxREAL);
-//    plhs[1] = mxCreateDoubleMatrix(1, 1, mxREAL);
-//	plhs[2] = mxCreateDoubleMatrix(1, 1, mxREAL);
-//    outputImg = mxGetPr(plhs[0]);
-//	funVal = mxGetPr(plhs[1]);
-//    iter = mxGetPr(plhs[2]);
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-//}
-
-
-
-//int main( int argc, char** argv )
-//{
-//    Mat image, chans[3];
-//    image = imread("test.png", CV_LOAD_IMAGE_COLOR);   // Read the file
-//
-//    int imgHeight = image.size().height;
-//    int imgWidth = image.size().width;
-//
-//    double lam = 0.35;
-//    double gamma = 7;
-//    int maxIter = 1000;
-//    double tol[] = {1e-4, 1e-4};
-//    int display = 1;
-//
-//    double *inputImg, *outputImg, *iter, *funVal;
-//
-//    outputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-//    inputImg = (double *) malloc(imgHeight * imgWidth * sizeof(double));
-//    iter = (double *) malloc(sizeof(double));
-//    funVal = (double *) malloc(sizeof(double));
-//
-//
-//    image.convertTo(image, CV_64FC4);
-//    Mat gaussian_noise = image.clone();
-//    randn(gaussian_noise,0,20);
-//   // image += gaussian_noise;
-//
-//    split(image, chans);
-//
-//
-//    // B channel
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[0].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[0].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[1].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[1].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//   for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j) {
-//            inputImg[i*imgWidth + j] = chans[2].at<double>(i, j) / 256;
-//          //  printf("%f\n", inputImg[i*imgWidth + j]);
-//        }
-//
-////
-//    memcpy(outputImg, inputImg, imgHeight * imgWidth * sizeof(double));
-////
-//    iter[0] = (double)tvl2_iso(outputImg, inputImg, imgHeight, imgWidth, lam, gamma, maxIter,tol[0],tol[1],display);
-//	funVal[0] = get_funval(outputImg,inputImg,lam,imgHeight,imgWidth);
-////
-//    for (int i=0; i < imgHeight; ++i)
-//        for (int j=0; j < imgWidth; ++j)
-//            chans[2].at<double>(i, j) = outputImg[i * imgWidth + j]  * 256;
-//
-//
-//    merge(chans, 3, image);
-//    image.convertTo(image, CV_8UC3);
-//    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-//    imshow( "Display window", image);                   // Show our image inside it.
-//    imwrite("t.jpg", image);
-//
-//
-//    waitKey(0);                                          // Wait for a keystroke in the window
-//
-//    free(outputImg);
-//    free(iter);
-//    free(funVal);
-//
-//    return 0;
-//}
-//
 
 Mat total_variation(Mat image) {
     Mat chans[3];

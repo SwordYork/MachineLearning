@@ -429,7 +429,7 @@ Mat total_variation(Mat image) {
     float gamma = 7;
     int maxIter = 1000;
     float tol[] = {1e-4, 1e-4};
-    int display = 1;
+    int display = 0;
 
     float *inputImg, *outputImg, *iter, *funVal;
 

@@ -3,7 +3,7 @@ opencvlib = -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d 
 
 all:	main
 
-main: main.o  median_filter.o pFAD_OMP.o pFAD_CUDA.o
+main: main.o  median_filter.o pFAD_OMP.o FAD_CUDA.o
 	nvcc -Xcompiler -fopenmp main.o pFAD_CUDA.o median_filter.o pFAD_OMP.o $(opencvlib) -o main
 
 
@@ -16,8 +16,8 @@ median_filter.o: median_filter.cpp
 pFAD_OMP.o: pFAD_OMP.cpp
 	g++ -fopenmp -c pFAD_OMP.cpp $(opencvinclude) -o pFAD_OMP.o
 
-pFAD_CUDA.o: pFAD_CUDA.cu
-	nvcc -c pFAD_CUDA.cu  $(opencvinclude)  
+FAD_CUDA.o: FAD_CUDA.cu
+	nvcc -c FAD_CUDA.cu  $(opencvinclude)  
 
 
 clean:

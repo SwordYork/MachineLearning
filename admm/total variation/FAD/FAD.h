@@ -4,8 +4,10 @@
 #include <cv.h>
 
 
-#ifndef FAD_H
-#define FAD_H
+#ifndef PFAD_H
+#define PFAD_H
 
 cv::Mat total_variation(cv::Mat image);
+
+cv::Mat cuda_total_variation(cv::Mat image);
 #endif
