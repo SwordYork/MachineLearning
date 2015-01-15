@@ -92,5 +92,3 @@ CD = caldist(new_X1);
 
 printf('calculate distance:\n')
 disp(CD.^2)
-
-
