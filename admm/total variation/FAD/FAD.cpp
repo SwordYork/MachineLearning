@@ -9,22 +9,23 @@
 #include <iostream>
 
 
+#include "helper_timer.h"
 using namespace cv;
 using namespace std;
 
 
 /*compute the primal error and residual*/
-__inline bool stopPri(double **X, double *sol, int m, int n, double absTol, double relTol, int display);
+bool stopPri(double **X, double *sol, int m, int n, double absTol, double relTol, int display);
 
 /*compute the dual error and resudual*/
-__inline bool stopDual(double *sol, double *sol_o, double *U1, double *U2, double *U3, int m, int n, 
+bool stopDual(double *sol, double *sol_o, double *U1, double *U2, double *U3, int m, int n, 
 				double rho, double absTol, double relTol, int display);
 
 /*compute the root of the quartic function*/
-__inline double NewtonRoot(const double a, const double b, const double c, const double d);
+double NewtonRoot(const double a, const double b, const double c, const double d);
 
 /*get the function value*/
-__inline double get_funval(const double *sol, const double *Y, const double lam, const int imgHeight, const int imgWidth);
+double get_funval(const double *sol, const double *Y, const double lam, const int imgHeight, const int imgWidth);
 
 /*method for isotropic TV*/
 int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, const double lam, const double rho, 
@@ -263,7 +264,6 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 					continue;
 				}
 
-				////////////////////////////////////////////
 				// compute w\tilde, since S\Sigma is fixed and constant
 				wt0 = w0 - 2*w1 + w2;
 				wt1 = w2 - w0;
@@ -340,7 +340,7 @@ int tvl2_iso(double* sol, double* Y, const int imgHeight, const int imgWidth, co
 			}
 		}
 			
-	/*compute sol, U1, U2, U3*/
+	    /*compute sol, U1, U2, U3*/
 		td = 1./(1+3*rho);			
 			for(i=0; i<imgDim;i++)
 			{
@@ -443,3 +443,37 @@ Mat total_variation(Mat image) {
     return image;
 }
 
+int main(int argc, char** argv )
+{
+    Mat origin_image, tv_image, noise_image, image;
+    origin_image = imread("test.png", CV_LOAD_IMAGE_COLOR);   // Read the file
+    image = origin_image.clone();
+
+    Size size = image.size();
+
+    // create noise image
+    image.convertTo(image, CV_64FC4);
+
+    noise_image = image.clone();
+    randn(noise_image,0,20);
+    noise_image += image;
+
+    // total variation need float type
+    tv_image = noise_image.clone();
+    
+    noise_image.convertTo(noise_image, CV_8UC3);
+
+
+    // use openmp pFAD version to denoise
+    
+    start_timer();
+    tv_image = total_variation(tv_image);
+    printf("naive method running time:%f ms\n", elasp_time());
+
+    namedWindow( "Display window", WINDOW_AUTOSIZE );
+    imshow( "Display window", tv_image);                   
+
+    waitKey(0);                                      
+
+    return 0;
+}

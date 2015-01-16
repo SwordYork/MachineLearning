@@ -4,7 +4,7 @@ opencvlib = -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d 
 all:	main
 
 main: main.o  median_filter.o pFAD_OMP.o FAD_CUDA.o
-	nvcc -Xcompiler -fopenmp main.o pFAD_CUDA.o median_filter.o pFAD_OMP.o $(opencvlib) -o main
+	nvcc -Xcompiler -fopenmp main.o FAD_CUDA.o median_filter.o pFAD_OMP.o $(opencvlib) -o main
 
 
 main.o: main.cpp

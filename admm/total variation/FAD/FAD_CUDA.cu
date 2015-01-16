@@ -499,7 +499,7 @@ int cuda_tvl2_iso(float* sol, float* Y,
 	
     unsigned int *d_BlkInd;
 
-    float *d_U1, *d_U2, *d_U3, *d_sol_o, *d_sol, *d_X, *d_Y, *d_tmp_sol;
+    float *d_U1, *d_U2, *d_U3, *d_sol_o, *d_sol, *d_X, *d_Y;
 
     unsigned int blk_grid_size = (imgDim + BLOCK_WIDTH * 3 - 1) / (BLOCK_WIDTH * 3);
     unsigned int normal_grid_size = (imgDim + BLOCK_WIDTH - 1) / BLOCK_WIDTH;
@@ -565,18 +565,14 @@ int cuda_tvl2_iso(float* sol, float* Y,
         // determine if the stop conditions are satisfied
         if(iter%step_size == 0) {
             if(!cuda_stopDual(d_sol, d_sol_o, d_U1, d_U2, d_U3, imgHeight, imgWidth, rho,absTol,relTol,display)) {
-                d_tmp_sol = d_sol_o;
-                d_sol_o = d_sol;
-                d_sol = d_tmp_sol;
+                checkCudaErrors(cudaMemcpy(d_sol_o, d_sol, imgDim * sizeof(float), cudaMemcpyDeviceToDevice));    
                 continue;
             }		
             if(cuda_stopPri(d_X,d_sol,imgHeight,imgWidth, absTol,relTol,display)){
                 break;
             }
         }	
-        d_tmp_sol = d_sol_o;
-        d_sol_o = d_sol;
-        d_sol = d_tmp_sol;
+        checkCudaErrors(cudaMemcpy(d_sol_o, d_sol, imgDim * sizeof(float), cudaMemcpyDeviceToDevice));
     }
 
     // copy to host
@@ -619,7 +615,7 @@ Mat cuda_total_variation(Mat image) {
     split(image, chans);
 
     for (int c = 0; c < 3; ++c) {
-        printf("start %d channel...\n", c);
+        // printf("start %d channel...\n", c);
         // B channel
         for (int i=0; i < imgHeight; ++i)
             for (int j=0; j < imgWidth; ++j) 

@@ -149,31 +149,14 @@ bool stopPri(double *d_X, double *d_sol, int m, int n, double absTol, double rel
 	return (rk <= epri);
 }
 
-
 // dual error and dual residual: stop 2
-bool stopDual(double *d_sol, double *d_sol_o, double *d_U1, double *d_U2, double *d_U3, int m, int n, 
-				double rho, double absTol, double relTol, int display)
+bool stopDual(double *d_sol, double *d_sol_o, double *d_U1, double *d_U2, double *d_U3, int m, int n, double rho, double absTol, double relTol, int display)
 {
 	double sqrt3 = sqrt(3.0);
 	float sk = 0, ed = 0;
 	int imgDim = m*n;
 	int i;
 
-
-    /*
-	int max_threads = omp_get_max_threads();
-	
-	omp_set_num_threads(max_threads);
-	#pragma omp parallel shared(sol,sol_o,U1,U2,U3,imgDim) private(i) reduction(+: sk,ed)
-	{	
-		#pragma omp for
-		for (i=0;i<imgDim;i++)
-		{
-			sk += (sol[i]-sol_o[i])*(sol[i]-sol_o[i]);
-			ed += U1[i]*U1[i] + U2[i]*U2[i] + U3[i]*U3[i];
-		}
-	}
-    */
 
     float *d_sk, *d_ed;
 
@@ -322,7 +305,6 @@ void inside_update(double *d_X, unsigned int *d_BlkInd, const int imgHeight, con
         return;
     }
 
-    ////////////////////////////////////////////
     // compute w\tilde, since S\Sigma is fixed and constant
     wt0 = w0 - 2*w1 + w2;
     wt1 = w2 - w0;
@@ -554,10 +536,10 @@ Mat total_variation(Mat image) {
     int imgHeight = size.height;
     int imgWidth = size.width;
 
-    double lam = 0.3;
-    double gamma = 7;
+    double lam = 0.21;
+    double gamma = 5;
     int maxIter = 1000;
-    double tol[] = {1e-4, 1e-4};
+    double tol[] = {1e-2, 1e-2};
     int display = 1;
 
     double *inputImg, *outputImg, *iter, *funVal;
@@ -625,8 +607,6 @@ int main(int argc, char** argv )
 
     // use openmp pFAD version to denoise
     tv_image = total_variation(tv_image);
-
-
 
 
     namedWindow( "Display window", WINDOW_AUTOSIZE );

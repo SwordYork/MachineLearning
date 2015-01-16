@@ -290,7 +290,6 @@ void inside_update(float *d_X, unsigned int *d_BlkInd, const int imgHeight, cons
         return;
     }
 
-    ////////////////////////////////////////////
     // compute w\tilde, since S\Sigma is fixed and constant
     wt0 = w0 - 2*w1 + w2;
     wt1 = w2 - w0;
@@ -522,10 +521,10 @@ Mat total_variation(Mat image) {
     int imgHeight = size.height;
     int imgWidth = size.width;
 
-    float lam = 0.3;
-    float gamma = 7;
+    float lam = 0.21;
+    float gamma = 5;
     int maxIter = 1000;
-    float tol[] = {1e-4, 1e-4};
+    float tol[] = {1e-2, 1e-2};
     int display = 1;
 
     float *inputImg, *outputImg, *iter, *funVal;
