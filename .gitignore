@@ -13,4 +13,6 @@
 *.out
 test/
 temp/
-
+*.html
+*.log
+test_*.png
