@@ -48,14 +48,12 @@ x = zeros(n,1);
 for iter = 1:niter 
     % plot step
     plot_ellipse(P, x);
-     
+
     % find active functions at current x
     [f, idx] = max(A*x + b);      
     % subgradient at current x
-    
     g = A(idx(1),:)';
     py = -g(1)/g(2) * x_range + x(2) + g(1)/g(2)*x(1);
-
    % if 0 < iter & iter < 3
         plot(x_range, py)
         plot(x(1), x(2), 'bs');
