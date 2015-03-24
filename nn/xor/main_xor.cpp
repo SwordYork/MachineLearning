@@ -58,7 +58,7 @@ int main()
     double delta_output;
     double delta_hidden[num_hidden_unit];
 
-    std::ifstream infile("/home/york/nn/xor_train.txt");
+    std::ifstream infile("xor_train.txt");
     for (int k=0; k < num_train_data; ++k) {
         infile >> train_data_input[k][0] >> train_data_input[k][1];
         infile >> train_flag[k];
@@ -148,7 +148,7 @@ int main()
     cout << hidden_output_v[0] << " " << hidden_output_v[1] << " " << hidden_output_v[2] << endl;
     cout << endl;
 
-    std::ifstream testfile("/home/york/nn/xor_test.txt");
+    std::ifstream testfile("xor_test.txt");
 
     int total_error = 0;
     for (int i = 0; i < num_test_data; ++i) {
