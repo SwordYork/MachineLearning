@@ -21,7 +21,7 @@ int main()
 {
 
     cout << "testing batch nn....." << endl;
-    nn_batch_spiral();
+    // nn_batch_spiral();
     cout << endl;
     cout << endl;
     cout << endl;

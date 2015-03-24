@@ -1,0 +1,1 @@
+/home/york/Program/MachineLearning/nn/two_spiral/src/CMakeFiles/nn.dir

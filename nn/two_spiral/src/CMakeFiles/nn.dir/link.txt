@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11   CMakeFiles/nn.dir/main.cpp.o CMakeFiles/nn.dir/nn_batch.cpp.o CMakeFiles/nn.dir/nn_seq.cpp.o  -o nn -rdynamic 

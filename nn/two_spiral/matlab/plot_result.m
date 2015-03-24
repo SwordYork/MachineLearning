@@ -1,5 +1,5 @@
 A = importdata('two_spiral_seq_result.txt');
-num_hidden_uint = 12;
+num_hidden_uint = 42;
 WV1 = zeros(3, num_hidden_uint);
 WU1 = zeros(2, num_hidden_uint);
 for j=1:num_hidden_uint
@@ -23,7 +23,7 @@ for j=1:num_hidden_uint
 end
 
 
-[X, Y] = meshgrid(-3:0.1:3);
+[X, Y] = meshgrid(-12:0.5:12);
 RX = reshape(X, numel(X), 1);
 RY = reshape(Y, numel(Y), 1);
 T = [RX RY];

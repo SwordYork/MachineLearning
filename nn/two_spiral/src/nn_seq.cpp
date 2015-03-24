@@ -26,13 +26,13 @@ void nn_seq_spiral()
     /*************
     * |last_error - current_error| / last_error < eps
     **************/
-    const double eps = 1e-4;
-    const int max_iter = 2000;
+    const double eps = 1e-8;
+    const int max_iter = 30000;
 
     // learning rate
     // adapt during epoch
-    double ingta = 0.5;
-    double alpha = 0.4;
+    double ingta = 0.02;
+    double alpha = 0.02;
 
     // entire train data set
     // random shuffle during each epoch
@@ -84,7 +84,7 @@ void nn_seq_spiral()
     double delta_hidden[num_hidden_unit];
 
     // read entire data set
-    std::ifstream infile("two_spiral_train.txt");
+    std::ifstream infile("gen_train.txt");
     for (int k=0; k < num_train_data; ++k) {
         infile >> train_data_input[k][0] >> train_data_input[k][1];
         infile >> train_flag[k];
@@ -109,7 +109,7 @@ void nn_seq_spiral()
         current_error = 0;
 
         // adjust learning rate
-        if (k % 500 == 0 && k != 0) {
+        if (k % 10000 == 0 && k != 0) {
             ingta /= 2;
             alpha /= 8;
         }
@@ -186,10 +186,10 @@ void nn_seq_spiral()
             }
         }
 
-        if (std::abs(last_error-current_error) * 1.0 / last_error < eps) {
-            cout << k << " epoch done" << endl;
-            break;
-        }
+        //if (std::abs(last_error-current_error) * 1.0 / last_error < eps) {
+         //   cout << k << " epoch done" << endl;
+         //   break;
+        //}
     }
 
     cout << "training time:" << (std::clock() - start_clock) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << endl;
@@ -208,12 +208,12 @@ void nn_seq_spiral()
         outfile << hidden_output_u[j] << endl;
     }
 
-    std::ifstream testfile("two_spiral_test.txt");
+    std::ifstream testfile("gen_train.txt");
 
     // Verification
     int total_misclassified = 0;
     int label;
-    for (int i = 0; i < num_test_data; ++i) {
+    for (int i = 0; i < 800; ++i) {
         testfile >> input_y[0] >> input_y[1];
         testfile >> label;
         // calculate local of input
@@ -235,7 +235,7 @@ void nn_seq_spiral()
         output_y = 1.0 / (1 + exp(-hidden_v));
 
         total_misclassified += ((output_y < 0.5 ? 0 : 1) != label);
-        //cout << output_y << " " << label << endl;
+        cout << output_y << " " << label << endl;
     }
 
     cout << "misclassified points:" << total_misclassified;

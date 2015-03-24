@@ -6,8 +6,8 @@
 #define _NN_COMMON_H_
 
 
-const int num_hidden_unit = 12;
-const int num_train_data = 96;
-const int num_test_data = 96;
+const int num_hidden_unit = 42;
+const int num_train_data = 800;
+const int num_test_data = 400;
 
 #endif //_NN_COMMON_H_
