@@ -1,0 +1,14 @@
+## Requirement
+cmake, make, g++
+
+I have test on linux, if you have any problem, please contact me.
+
+## How to Run
+cmake .
+make
+./nn
+
+## Result Plot
+Please use matlab to plot train result.
+The matlab file is plot_result.m
+You can modify importdata to draw batch or seq nn result.

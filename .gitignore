@@ -1,18 +1,20 @@
-# ignore all 
-*
-
-# don't ignore which have extensions or dir 
-!*.*
-!*/
-!Make*
-
-# ignore hidden file
-.*
+# find . -type f -not -path '*/\.*' -exec file {} \; | grep executable | sed 's/:.*$//g' | sed 's/^.\///g'  | gawk -F/ '{if (!match($NF,/.*\..*/)) {print}}' >> .gitignore
+.directory
+*.mat 
+*test/
+*.aux
+*.out
+*.log
+*.dvi
+*.bbl
+*.bcf
+*.blg
+*.backup
+*.lot
+*.lof
+*.toc
+*.synctex.gz
 *.o
 *.so
-*.out
-test/
-temp/
-*.html
-*.log
-test_*.png
+.*
+nn/two_spiral/src/nn

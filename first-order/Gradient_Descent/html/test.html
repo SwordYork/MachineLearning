@@ -1,0 +1,268 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Gradient Descent</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-20"><meta name="DC.source" content="test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Gradient Descent</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Gradient</a></li><li><a href="#2">Gradient Descent</a></li><li><a href="#3">Fail situation</a></li><li><a href="#5">Reference</a></li></ul></div><h2>Gradient<a name="1"></a></h2><p>Gradient descent method is based on gradient <img src="test_eq59666.png" alt="$$ \nabla f  = \frac{\partial f}{\partial x_1 }\mathbf{e}_1 + \cdots + \frac{\partial f}{\partial x_n }\mathbf{e}_n $$"></p><p>gradient always point to the asent direction</p><h2>Gradient Descent<a name="2"></a></h2><p>f is object function, and this is unconstrained <img src="test_eq32818.png" alt="$$\min_{x} f $$"></p><pre class="codeinput">f = (@(X) (exp(X(1,:)-1) + exp(1-X(2,:)) + (X(1,:) - X(2,:)).^2));
+<span class="comment">%f = (@(X) (sin(0.5*X(1,:).^2 - 0.25 * X(2,:).^2 + 3) .* cos(2*X(1,:) + 1 - exp(X(2,:))) ))</span>
+</pre><h2>Fail situation<a name="3"></a></h2><p>Rosenbrock function Gradient descent/ascent algorithm zig-zags, because the gradient is nearly orthogonal to the direction of the local minimum in these regions. It's hard to convergence <img src="test_eq33755.png" alt="$$ f(x, y) = (1-x)^2 + 100 * (y - x^2) ^ 2 $$"></p><pre class="codeinput"><span class="comment">%f = (@(X) (1-X(1,:)).^2 + 100 * (X(2,:) - X(1,:).^2).^2);</span>
+
+
+[X, Y] = meshgrid([-2:0.1:2]);
+
+XX = [reshape(X, 1, numel(X)); reshape(Y, 1, numel(Y))];
+<span class="comment">%surf(X, Y, reshape(f(XX), length(X), length(X)))</span>
+contour(X, Y, reshape(f(XX), length(X), length(X)), 50)
+
+hold <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="test_01.png" alt=""> <p>plot gradient of function</p><pre class="codeinput"><span class="keyword">for</span> i=1:5:length(XX)
+    tmp = XX(:,i);
+    g = gradient_of_function(f, tmp);
+    <span class="comment">%plot([tmp(1),tmp(1)+g(1)*0.02],[tmp(1),tmp(2)+g(1)*0.02]);</span>
+    quiver(tmp(1),tmp(2),g(1)*0.02,g(2)*0.02)
+<span class="keyword">end</span>
+
+<span class="comment">%quiver(X,Y,DX,DY)</span>
+
+<span class="comment">%wolfe(f, [1;1], 1)</span>
+x0 = [-1; -1];
+[x, v, h] = gradient(f, x0)
+[x, v] = fminunc(f, x0)
+
+
+<span class="keyword">for</span> i=2:length(h)
+    tmp1 = h(:,i-1);
+    tmp2 = h(:,i);
+    quiver(tmp1(1),tmp1(2),tmp2(1)-tmp1(1),tmp2(2)-tmp1(2), 0, <span class="string">'r'</span>,<span class="string">'LineWidth'</span>,2)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+alpha =
+
+    0.2000
+
+
+alpha =
+
+    0.2000
+
+
+alpha =
+
+     1
+
+
+alpha =
+
+     1
+
+
+alpha =
+
+    0.2000
+
+
+alpha =
+
+     1
+
+
+alpha =
+
+    0.2000
+
+
+alpha =
+
+     1
+
+
+alpha =
+
+    0.2000
+
+
+alpha =
+
+     1
+
+
+alpha =
+
+    0.2000
+
+
+x =
+
+    0.7960
+    1.2038
+
+
+v =
+
+    1.7974
+
+
+h =
+
+  Columns 1 through 7
+
+   -1.0000   -1.0271   -0.4515    0.6432    0.8185    0.7755    0.7859
+   -1.0000    0.4778    0.2130    1.0809    1.1279    1.1801    1.2059
+
+  Columns 8 through 12
+
+    0.7925    0.7963    0.7956    0.7959    0.7960
+    1.2007    1.2024    1.2033    1.2039    1.2038
+
+Warning: Gradient must be provided for trust-region algorithm;
+  using line-search algorithm instead. 
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the default value of the function tolerance.
+
+
+
+
+x =
+
+    0.7961
+    1.2039
+
+
+v =
+
+    1.7974
+
+</pre><img vspace="5" hspace="5" src="test_02.png" alt=""> <h2>Reference<a name="5"></a></h2><div><ol><li><a href="http://www.onmyphd.com/?p=gradient.descent">http://www.onmyphd.com/?p=gradient.descent</a></li><li>Convex Optimization</li><li><a href="https://en.wikipedia.org/wiki/Gradient">https://en.wikipedia.org/wiki/Gradient</a></li><li><a href="https://en.wikipedia.org/wiki/Gradient_descent">https://en.wikipedia.org/wiki/Gradient_descent</a></li><li><a href="http://stronglyconvex.com/blog/gradient-descent.html">http://stronglyconvex.com/blog/gradient-descent.html</a></li></ol></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Gradient Descent
+
+%% Gradient
+% Gradient descent method is based on gradient
+% $$ \nabla f  = \frac{\partial f}{\partial x_1 }\mathbf{e}_1 + \cdots +
+% \frac{\partial f}{\partial x_n }\mathbf{e}_n $$
+%
+% gradient always point to the asent direction
+
+%% Gradient Descent
+% f is object function, and this is unconstrained
+% $$\min_{x} f $$
+%
+
+f = (@(X) (exp(X(1,:)-1) + exp(1-X(2,:)) + (X(1,:) - X(2,:)).^2));
+%f = (@(X) (sin(0.5*X(1,:).^2 - 0.25 * X(2,:).^2 + 3) .* cos(2*X(1,:) + 1 - exp(X(2,:))) ))
+
+%% Fail situation
+% Rosenbrock function
+% Gradient descent/ascent algorithm zig-zags, 
+% because the gradient is nearly orthogonal to the direction of the local minimum in these regions.
+% It's hard to convergence
+% $$ f(x, y) = (1-x)^2 + 100 * (y - x^2) ^ 2 $$
+%
+%f = (@(X) (1-X(1,:)).^2 + 100 * (X(2,:) - X(1,:).^2).^2);
+
+
+[X, Y] = meshgrid([-2:0.1:2]);
+
+XX = [reshape(X, 1, numel(X)); reshape(Y, 1, numel(Y))];
+%surf(X, Y, reshape(f(XX), length(X), length(X)))
+contour(X, Y, reshape(f(XX), length(X), length(X)), 50)
+
+hold on;
+
+%%
+% plot gradient of function
+for i=1:5:length(XX)
+    tmp = XX(:,i);
+    g = gradient_of_function(f, tmp);
+    %plot([tmp(1),tmp(1)+g(1)*0.02],[tmp(1),tmp(2)+g(1)*0.02]);
+    quiver(tmp(1),tmp(2),g(1)*0.02,g(2)*0.02)
+end
+
+%quiver(X,Y,DX,DY)
+
+%wolfe(f, [1;1], 1)
+x0 = [-1; -1];
+[x, v, h] = gradient(f, x0)
+[x, v] = fminunc(f, x0)
+
+
+for i=2:length(h)
+    tmp1 = h(:,i-1);
+    tmp2 = h(:,i);
+    quiver(tmp1(1),tmp1(2),tmp2(1)-tmp1(1),tmp2(2)-tmp1(2), 0, 'r','LineWidth',2)   
+end
+
+%% Reference
+% # <http://www.onmyphd.com/?p=gradient.descent>
+% # Convex Optimization
+% # <https://en.wikipedia.org/wiki/Gradient>
+% # <https://en.wikipedia.org/wiki/Gradient_descent>
+% # <http://stronglyconvex.com/blog/gradient-descent.html>
+##### SOURCE END #####
+--></body></html>
